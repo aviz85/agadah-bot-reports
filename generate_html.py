@@ -425,13 +425,14 @@ def extract_test_info(md_content: str) -> dict:
             info['final_output'] = final_output_match.group(1).strip()
     
     # Extract step timings
+    # Format in markdown is: STEP: Name ... Result: SUCCESS/FAIL ... Duration: X.Xs
     steps = []
-    step_pattern = r'STEP: (.+?)\n.*?Duration: ([\d.]+)s.*?Result: (\w+)'
+    step_pattern = r'STEP: (.+?)\n={10,}.*?Result: (\w+)\nDuration: ([\d.]+)s'
     for match in re.finditer(step_pattern, md_content, re.DOTALL):
         steps.append({
             'name': match.group(1),
-            'duration': float(match.group(2)),
-            'status': match.group(3)
+            'duration': float(match.group(3)),
+            'status': match.group(2)
         })
     info['steps'] = steps
     
