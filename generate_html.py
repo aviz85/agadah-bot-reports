@@ -414,9 +414,15 @@ def extract_test_info(md_content: str) -> dict:
             pass
     
     # Extract final output (the activity plan)
-    final_output_match = re.search(r'## Final Output\n\n([\s\S]+?)(?=\n## |$)', md_content)
+    # The final output is wrapped in ```markdown ... ``` code block
+    final_output_match = re.search(r'## Final Output\n\n```markdown\n([\s\S]+?)```', md_content)
     if final_output_match:
         info['final_output'] = final_output_match.group(1).strip()
+    else:
+        # Fallback: try without code block wrapper
+        final_output_match = re.search(r'## Final Output\n\n([\s\S]+?)(?=\n## |$)', md_content)
+        if final_output_match:
+            info['final_output'] = final_output_match.group(1).strip()
     
     # Extract step timings
     steps = []
